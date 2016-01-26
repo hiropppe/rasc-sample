@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="parser-server-webapp">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <property name="java-output-path" value="/parser-server-webapp/bin"/>
+        <property name="context-root" value="parser-server-webapp"/>
+    </wb-module>
+</project-modules>

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="stdio_build" default="dist">
+	<!-- ********* property 設定 ********* -->
+	<property name="rasc.path" value=".." />
+	<property name="rasc.lib" value="${rasc.path}/jp.go.nict.isp.wisdom2013.lib/" />
+	<property name="msgpack-java.path" value="${rasc.path}/msgpack-java/" />
+	<property name="msgpack-rpc-java.path" value="${rasc.path}/msgpack-rpc-java/" />
+
+	<!-- ********* path設定 ********** -->
+	<!-- wisdomX classpath -->
+	<path id="clspath.wisdomX">
+		<fileset dir="${rasc.lib}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="build/jp.go.nict.isp.wisdom2013.api.jar" />
+		<pathelement location="build/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" />
+		<pathelement location="build/jp.go.nict.isp.wisdom2013.plugin.jar" />
+		<pathelement location="build/msgpack-java.jar" />
+		<pathelement location="build/msgpack-rpc-java.jar" />
+		<pathelement location="build/jp.go.nict.langrid.client.msgpackrpc.jar" />
+		<pathelement location="build/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc.jar" />
+		<pathelement location="build/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc.jar" />
+		<pathelement location="build/jp.go.nict.ial.wisdom.service.api.jar" />
+		<pathelement location="build/jp.go.nict.ial.wisdom.service.plugin.jar" />
+		<pathelement location="build/jp.go.nict.rasc.service.initializer.jar" />
+		<pathelement location="build/jp.go.nict.wisdom.wrapper.api.jar" />
+		<pathelement location="build/jp.go.nict.wisdom.wrapper.jar" />
+		<pathelement location="build/rasc-stdio-api.jar" />
+	</path>
+
+	<!-- class path for msgpack-java -->
+	<path id="msgpack-java.lib">
+		<fileset dir="${msgpack-java.path}/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- class path for msgpack-rpc-java -->
+	<path id="msgpack-rpc-java.lib">
+		<pathelement location="${msgpack-rpc-java.path}/lib/slf4j-jdk14-1.5.8.jar" />
+		<pathelement location="${msgpack-rpc-java.path}/lib/log4j-1.2.15.jar" />
+		<pathelement location="${msgpack-rpc-java.path}/lib/netty-3.9.0.Final.jar" />
+		<pathelement location="${msgpack-rpc-java.path}/lib/slf4j-api-1.5.8.jar" />
+	</path>
+
+	<!-- ********* マクロ定義 ********** -->
+	<!-- 
+		*********************************
+		* build source & make jar macro *
+		*********************************
+		ソースのコンパイル及びjarを作成するマクロ
+
+		project.name = ビルドするプロジェクト名 @{project.name}.jar を生成する。
+		src.dir = ビルド対象のソースフォルダへのパスを指定する。
+		dest.dir = jar及びビルド用のフォルダを作成するパスを指定する、通常は"build"
+		標準のクラスパス以外にクラスパスの指定が必要な場合には、以下のように指定する
+		<cplist>
+			<pathelement location="${wisdom.lib}/lib/lucene/lucene-analyzers-common-4.8.1.jar" />
+			<pathelement location="${wisdom.lib}/lib/lucene/lucene-core-4.8.1.jar" />
+			<pathelement location="${wisdom.lib}/lib/lucene/lucene-queryparser-4.8.1.jar" />
+		</cplist>
+
+	-->
+	<macrodef name="build-jar">
+		<attribute name="project.name" />
+		<attribute name="src.dir" />
+		<attribute name="dest.dir" />
+		<element name="cplist" optional="yes" />
+		<sequential>
+			<echo>************************************************************************ </echo>
+			<echo>build... @{project.name}</echo>
+			<echo>************************************************************************ </echo>
+			<mkdir dir="@{dest.dir}/@{project.name}" />
+			<javac destdir="@{dest.dir}/@{project.name}" encoding="UTF-8" includeantruntime="false" debug="true">
+				<src path="@{src.dir}" />
+				<classpath>
+					<path refid="msgpack-java.lib" />
+					<path refid="msgpack-rpc-java.lib" />
+					<path refid="clspath.wisdomX" />
+					<cplist />
+				</classpath>
+			</javac>
+			<jar jarfile="@{dest.dir}/@{project.name}.jar">
+				<fileset dir="@{dest.dir}/@{project.name}" includes="**/*.class" />
+				<fileset dir="@{src.dir}" includes="**/*.java" />
+			</jar>
+		</sequential>
+	</macrodef>
+
+	<!-- 
+		***********************
+		* make war file macro *
+		***********************
+		WARファイルを作成用マクロ
+		
+		project.name = warを構成するプロジェクト名 @{project.name}.war を生成する。
+		base.dir = 通常はwisdom-serviceのパス ${wisdom.path}を指定する
+		wrapper.name = Wrapperのプロジェクト名を指定する @{wrapper.name}をwarに梱包する
+		dest.dir = war 格納先を指定する、通常は"build" を指定する @{dest.dir}/war/ に保存する。
+		/WebContext/* /WebContent/WEB-INF/**/*.* はWARに梱包される
+		共通ライブラリ以外で追加する場合には、
+		<liblist>
+			<lib file="${wisdom.lib}/lib/lucene/lucene-analyzers-common-4.8.1.jar" />
+			<lib file="${wisdom.lib}/lib/lucene/lucene-core-4.8.1.jar" />
+			<lib file="${wisdom.lib}/lib/lucene/lucene-queryparser-4.8.1.jar" />
+		</liblist>
+		上記のように指定可能
+		※lib 以外にfileset等も指定可能
+	-->
+	<macrodef name="make-war">
+		<attribute name="project.name" />
+		<attribute name="base.dir" />
+		<attribute name="wrapper.name" />
+		<attribute name="dest.dir" />
+		<element name="liblist" optional="yes" />
+		<sequential>
+			<echo>************************************************************************ </echo>
+			<echo>make war ... @{project.name}.war</echo>
+			<echo>************************************************************************ </echo>
+			<war destfile="@{dest.dir}/war/@{project.name}.war" webxml="@{base.dir}/@{project.name}/WebContent/WEB-INF/web.xml">
+				<webinf dir="@{base.dir}/@{project.name}/WebContent/WEB-INF/" includes="**/*.*" excludes="**/web.xml" />
+				<fileset dir="@{base.dir}/@{project.name}/WebContent/" includes="**/*.*" excludes="WEB-INF/**/*.*"/>
+				<!-- msgpack lib -->
+				<lib dir="${msgpack-java.path}/lib" includes="*.jar" />
+				<lib file="${msgpack-rpc-java.path}/lib/slf4j-jdk14-1.5.8.jar" />
+				<lib file="${msgpack-rpc-java.path}/lib/log4j-1.2.15.jar" />
+				<lib file="${msgpack-rpc-java.path}/lib/netty-3.9.0.Final.jar" />
+				<lib file="${msgpack-rpc-java.path}/lib/slf4j-api-1.5.8.jar" />
+				<!-- rasc lib -->
+				<lib dir="${rasc.lib}/lib/axis/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/common/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/google/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/langrid/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/opensymphony/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/spring/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/tomcat6/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/trie4j/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/ws/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/json/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/jettymsgpack/" includes="**/*.jar" />
+				<lib dir="${rasc.lib}/lib/mustache/" includes="**/*.jar" />
+				<!-- wisdom & rasc object -->
+				<lib file="@{dest.dir}/jp.go.nict.isp.wisdom2013.api.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.isp.wrapper.wisdom.abstractservice.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.isp.wisdom2013.plugin.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.langrid.client.msgpackrpc.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.ial.wisdom.service.api.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.ial.wisdom.service.plugin.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.rasc.service.initializer.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.wisdom.wrapper.jar" />
+				<lib file="@{dest.dir}/jp.go.nict.wisdom.wrapper.api.jar" />
+				<lib file="@{dest.dir}/msgpack-java.jar" />
+				<lib file="@{dest.dir}/msgpack-rpc-java.jar" />
+				<lib file="@{dest.dir}/rasc-stdio-api.jar" />
+				<lib file="@{dest.dir}/@{wrapper.name}.jar" />
+				<!-- additional lib & file -->
+				<liblist />
+			</war>
+			<mkdir dir="@{dest.dir}/deploy/@{project.name}/war" />
+			<copy todir="@{dest.dir}/deploy/@{project.name}/">
+				<fileset dir="@{base.dir}/@{project.name}/" includes="war/*.*" excludes="war/*.war" />
+			</copy>
+			<copy file="@{dest.dir}/war/@{project.name}.war" tofile="@{dest.dir}/deploy/@{project.name}/war/@{project.name}.war" />
+		</sequential>
+	</macrodef>
+
+
+	<!-- ********* ビルド開始 ********** -->
+	<target name="init">
+		<mkdir dir="build" />
+	</target>
+
+	<!-- rasc object compile -->
+	<target name="build.rasc.object" depends="init">
+		<echo>#################################</echo>
+		<echo>#### start build rasc object ####</echo>
+		<echo>#################################</echo>
+		<build-jar project.name="msgpack-java" src.dir="${msgpack-java.path}/src/main" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="msgpack-rpc-java" src.dir="${msgpack-rpc-java.path}/src/main" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.langrid.client.msgpackrpc" src.dir="${rasc.path}/jp.go.nict.langrid.client.msgpackrpc/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc" src.dir="${rasc.path}/jp.go.nict.ial.servicecontainer.handler.websocketjsonrpc/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.isp.wisdom2013.api" src.dir="${rasc.path}/jp.go.nict.isp.wisdom2013.api/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.isp.wisdom2013.plugin" src.dir="${rasc.path}/jp.go.nict.isp.wisdom2013.plugin/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.isp.wrapper.wisdom.abstractservice" src.dir="${rasc.path}/jp.go.nict.isp.wrapper.wisdom.abstractservice/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.langrid.servicecontainer.handler.msgpackrpc" src.dir="${rasc.path}/jp.go.nict.langrid.servicecontainer.handler.msgpackrpc/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.ial.webapps.wisdom.proxy" src.dir="${rasc.path}/jp.go.nict.ial.webapps.wisdom.proxy/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.rasc.service.initializer" src.dir="${rasc.path}/jp.go.nict.rasc.service.initializer/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.wisdom.wrapper.api" src.dir="${rasc.path}/jp.go.nict.wisdom.wrapper.api/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="jp.go.nict.wisdom.wrapper" src.dir="${rasc.path}/jp.go.nict.wisdom.wrapper/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="rasc-stdio-api" src.dir="${rasc.path}/rasc-stdio-api/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+	</target>
+
+	<!-- wisdom object compile -->
+	<target name="build.stdio.object" depends="build.rasc.object">
+		<build-jar project.name="rasc-stdio-server" src.dir="${rasc.path}/rasc-stdio-server/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+		<build-jar project.name="rasc-stdio-worker" src.dir="${rasc.path}/rasc-stdio-worker/src" dest.dir="build">
+			<cplist>
+			</cplist>
+		</build-jar>
+	</target>
+
+	<!-- Create war files. -->
+	<target name="stdio.war" depends="build.stdio.object">
+		<mkdir dir="build/war" />
+		<mkdir dir="build/deploy" />
+
+		<make-war project.name="rasc-stdio-server-webapp" base.dir="${rasc.path}" dest.dir="build" wrapper.name="rasc-stdio-server">
+			<liblist>
+			</liblist>
+		</make-war>
+		<make-war project.name="rasc-stdio-worker-webapp" base.dir="${rasc.path}" dest.dir="build" wrapper.name="rasc-stdio-worker">
+			<liblist>
+			</liblist>
+		</make-war>
+		<make-war project.name="jp.go.nict.ial.webapps.wisdom.proxyservice" base.dir="${rasc.path}" dest.dir="build" wrapper.name="jp.go.nict.ial.webapps.wisdom.proxy">
+			<liblist>
+			</liblist>
+		</make-war>
+	</target>
+
+
+	<!-- jetty compile -->
+	<target name="jetty" depends="stdio.war">
+		<mkdir dir="build/jp.go.nict.langrid.webapps.jetty.embedded" />
+		<javac destdir="build/jp.go.nict.langrid.webapps.jetty.embedded" encoding="UTF-8" includeantruntime="false" debug="true">
+			<src path="${rasc.path}/jp.go.nict.langrid.webapps.jetty.embedded/src" />
+			<classpath>
+				<fileset dir="${rasc.lib}/lib/jetty9/" includes="**/*.jar" />
+				<fileset file="${rasc.lib}/lib/jettymsgpack/jp.go.nict.ial.jetty.msgpackrpc.serviceloader.api.jar" />
+				<fileset file="${rasc.lib}/lib/json/jsonic-1.3.0.jar" />
+			</classpath>
+		</javac>
+		<unzip src="${rasc.lib}/lib/eclipse/jar-in-jar-loader.zip" dest="build/jp.go.nict.langrid.webapps.jetty.embedded" />
+		<path id="jetty.libpath">
+			<pathelement location="${rasc.lib}/lib" />
+		</path>
+		<pathconvert property="jetty.pathinfo" refid="jetty.libpath" pathsep=" " targetos="unix" />
+		<path id="jetty.jars">
+			<fileset file="${rasc.lib}/lib/json/jsonic-1.3.0.jar" />
+			<fileset dir="${rasc.lib}/lib/jetty9/" includes="**/*.jar" />
+		</path>
+		<pathconvert property="jetty.clspath" pathsep=" " targetos="unix" refid="jetty.jars">
+			<map from="${jetty.pathinfo}/json/" to="" />
+			<map from="${jetty.pathinfo}/jetty9/" to="" />
+		</pathconvert>
+		<jar jarfile="build/embeddedserver.jar">
+			<fileset dir="build/jp.go.nict.langrid.webapps.jetty.embedded" includes="**/*.class" />
+			<fileset dir="${rasc.path}/jp.go.nict.langrid.webapps.jetty.embedded/src" includes="**/*.java" />
+			<fileset file="${rasc.lib}/lib/json/jsonic-1.3.0.jar" />
+			<fileset dir="${rasc.lib}/lib/jetty9/" includes="**/*.jar" />
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
+				<attribute name="Rsrc-Main-Class" value="jp.go.nict.langrid.webapps.jetty.embedded.EmbeddedServer" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Rsrc-Class-Path" value="./ ${jetty.clspath} " />
+			</manifest>
+		</jar>
+		<mkdir dir="build/deploy/jp.go.nict.langrid.webapps.jetty.embedded/jar" />
+		<copy todir="build/deploy/jp.go.nict.langrid.webapps.jetty.embedded/">
+			<fileset dir="${rasc.path}/jp.go.nict.langrid.webapps.jetty.embedded/" includes="scripts/**/*.*" />
+		</copy>
+		<copy file="build/embeddedserver.jar" tofile="build/deploy/jp.go.nict.langrid.webapps.jetty.embedded/jar/embeddedserver.jar" />
+	</target>
+
+	<!-- chmod for scripts -->
+	<target name="chmod.scripts" depends="jetty">
+		<chmod dir="build/deploy/jp.go.nict.langrid.webapps.jetty.embedded/scripts/" perm="777" includes="**/*.sh" />
+	</target>
+
+
+	<!-- package build -->
+	<target name="dist" depends="chmod.scripts">
+	</target>
+
+	<!-- clean -->
+	<target name="clean">
+		<delete dir="build" />
+	</target>
+
+</project>

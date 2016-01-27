@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="stdio_build" default="dist">
+<project name="parser_build" default="dist">
 	<!-- ********* property 設定 ********* -->
-	<property name="rasc.path" value=".." />
+    <property name="rasc.path" value="../../../rasc" />
 	<property name="rasc.lib" value="${rasc.path}/jp.go.nict.isp.wisdom2013.lib/" />
 	<property name="msgpack-java.path" value="${rasc.path}/msgpack-java/" />
 	<property name="msgpack-rpc-java.path" value="${rasc.path}/msgpack-rpc-java/" />
+    <property name="rasc.sample.path" value=".." />
 
 	<!-- ********* path設定 ********** -->
 	<!-- wisdomX classpath -->
@@ -25,7 +26,7 @@
 		<pathelement location="build/jp.go.nict.rasc.service.initializer.jar" />
 		<pathelement location="build/jp.go.nict.wisdom.wrapper.api.jar" />
 		<pathelement location="build/jp.go.nict.wisdom.wrapper.jar" />
-		<pathelement location="build/rasc-stdio-api.jar" />
+		<pathelement location="build/parser-api.jar" />
 	</path>
 
 	<!-- class path for msgpack-java -->
@@ -153,7 +154,7 @@
 				<lib file="@{dest.dir}/jp.go.nict.wisdom.wrapper.api.jar" />
 				<lib file="@{dest.dir}/msgpack-java.jar" />
 				<lib file="@{dest.dir}/msgpack-rpc-java.jar" />
-				<lib file="@{dest.dir}/rasc-stdio-api.jar" />
+				<lib file="@{dest.dir}/parser-api.jar" />
 				<lib file="@{dest.dir}/@{wrapper.name}.jar" />
 				<!-- additional lib & file -->
 				<liblist />
@@ -225,34 +226,34 @@
 			<cplist>
 			</cplist>
 		</build-jar>
-		<build-jar project.name="rasc-stdio-api" src.dir="${rasc.path}/rasc-stdio-api/src" dest.dir="build">
+		<build-jar project.name="parser-api" src.dir="${rasc.sample.path}/parser-api/src" dest.dir="build">
 			<cplist>
 			</cplist>
 		</build-jar>
 	</target>
 
 	<!-- wisdom object compile -->
-	<target name="build.stdio.object" depends="build.rasc.object">
-		<build-jar project.name="rasc-stdio-server" src.dir="${rasc.path}/rasc-stdio-server/src" dest.dir="build">
+	<target name="build.parser.object" depends="build.rasc.object">
+		<build-jar project.name="parser-server" src.dir="${rasc.sample.path}/parser-server/src" dest.dir="build">
 			<cplist>
 			</cplist>
 		</build-jar>
-		<build-jar project.name="rasc-stdio-worker" src.dir="${rasc.path}/rasc-stdio-worker/src" dest.dir="build">
+		<build-jar project.name="parser-worker" src.dir="${rasc.sample.path}/parser-worker/src" dest.dir="build">
 			<cplist>
 			</cplist>
 		</build-jar>
 	</target>
 
 	<!-- Create war files. -->
-	<target name="stdio.war" depends="build.stdio.object">
+	<target name="parser.war" depends="build.parser.object">
 		<mkdir dir="build/war" />
 		<mkdir dir="build/deploy" />
 
-		<make-war project.name="rasc-stdio-server-webapp" base.dir="${rasc.path}" dest.dir="build" wrapper.name="rasc-stdio-server">
+		<make-war project.name="parser-server-webapp" base.dir="${rasc.sample.path}" dest.dir="build" wrapper.name="parser-server">
 			<liblist>
 			</liblist>
 		</make-war>
-		<make-war project.name="rasc-stdio-worker-webapp" base.dir="${rasc.path}" dest.dir="build" wrapper.name="rasc-stdio-worker">
+		<make-war project.name="parser-worker-webapp" base.dir="${rasc.sample.path}" dest.dir="build" wrapper.name="parser-worker">
 			<liblist>
 			</liblist>
 		</make-war>
@@ -264,7 +265,7 @@
 
 
 	<!-- jetty compile -->
-	<target name="jetty" depends="stdio.war">
+	<target name="jetty" depends="parser.war">
 		<mkdir dir="build/jp.go.nict.langrid.webapps.jetty.embedded" />
 		<javac destdir="build/jp.go.nict.langrid.webapps.jetty.embedded" encoding="UTF-8" includeantruntime="false" debug="true">
 			<src path="${rasc.path}/jp.go.nict.langrid.webapps.jetty.embedded/src" />

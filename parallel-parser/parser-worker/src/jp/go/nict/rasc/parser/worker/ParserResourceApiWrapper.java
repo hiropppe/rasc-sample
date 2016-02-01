@@ -20,7 +20,7 @@ public class ParserResourceApiWrapper extends ResourceApiWrapperBase {
 	
 	public ParserResourceApiWrapper() {
 		service = new StdIOCommandParallelArrayService();
-		service.setCmdLine("/root/nict/rasc/run_mecab.sh");
+		service.setCmdLine("/usr/local/bin/mecab");
 		service.setDelimiterIn("\\n");
 		service.setDelimiterOut("EOS\\n");
 		service.setDelLastNewline(true);

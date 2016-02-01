@@ -1,6 +1,8 @@
 ## RaSCメモ
 
-作業中。。。
+調査検証中。。。
+
+RaSCを使って入力文書の解析を複数のノードに分散させるメモ
 
 環境
 - Fabric 1.10.2
@@ -8,9 +10,11 @@
 - Docker 1.8.2
 - Docker Compose 1.3.1
 
-### MeCabの分散実行
-呼ぶスクリプトを変えれば、JUMANも、JUMAN+KNPも、MeCab+J.DepP同じ
+### サンプル解析器の設定
+ParserResourceApiWrapperでStdIOCommandParallelArrayServiceを初期化している。
+サンプルはMeCab。
 
+### サンプルの配備
 コンテナの起動
 ```
 $ docker-compose up -d

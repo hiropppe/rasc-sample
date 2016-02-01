@@ -1,22 +1,22 @@
-package jp.go.nict.rasc.stdio.api;
+package jp.go.nict.rasc.parser.api;
 
 import jp.go.nict.langrid.commons.rpc.intf.Field;
 
 import org.msgpack.annotation.Message;
 
 @Message
-public class StdIn {
+public class Doc {
 	@Field(order = 1)
 	private int seq;
 	@Field(order = 2)
-	private String value;
+	private String sent;
 
-	public StdIn() {
+	public Doc() {
 	}
 
-	public StdIn(int seq, String value) {
+	public Doc(int seq, String sent) {
 		this.seq = seq;
-		this.value = value;
+		this.sent = sent;
 	}
 	
 	public int getSeq() {
@@ -27,12 +27,12 @@ public class StdIn {
 		this.seq = seq;
 	}
 
-	public final String getValue() {
-		return value;
+	public final String getSent() {
+		return sent;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setSent(String sent) {
+		this.sent = sent;
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class StdIn {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		StdIn other = (StdIn) obj;
+		Doc other = (Doc) obj;
 		return other.seq == this.seq;
 	}
 }

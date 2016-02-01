@@ -4,7 +4,7 @@
 	<bean id="target"
 		class="jp.go.nict.langrid.servicecontainer.handler.TargetServiceFactory">
 		<property name="service">
-			<bean class="jp.go.nict.rasc.stdio.server.StdIOServiceServer">
+			<bean class="jp.go.nict.rasc.parser.server.ParserServer">
 			<property name="endpointList">
 				<list>
 					<value>http://172.21.20.76:8080/jp.go.nict.isp.webapps.samplesearch.worker/pbServices/SampleSearchWorker</value>

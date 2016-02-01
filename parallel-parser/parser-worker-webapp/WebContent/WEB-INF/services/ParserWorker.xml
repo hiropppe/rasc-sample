@@ -4,7 +4,7 @@
 	<bean id="target"
 		class="jp.go.nict.langrid.servicecontainer.handler.TargetServiceFactory">
 		<property name="service">
-			<bean class="jp.go.nict.rasc.stdio.worker.StdIOServiceWorker">
+			<bean class="jp.go.nict.rasc.stdio.worker.ParserWorker">
 			</bean>
 		</property>
 	</bean>

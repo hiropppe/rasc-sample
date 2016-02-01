@@ -60,4 +60,6 @@ ADD bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
 ENV BOOTSTRAP /etc/bootstrap.sh
 
+RUN mkdir ~/.ssh
+
 CMD ["/etc/bootstrap.sh", "-d"]

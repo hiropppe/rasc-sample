@@ -42,5 +42,5 @@ $ fab config:'deploy.properties' startproxy -u root -i ~/.ssh/docker_rsa
 ```
 $ fab config:'deploy.properties' stopproxy -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' stopAllworkers -u root -i ~/.ssh/docker_rsa
-$ fab config:'deploy.properties' stopAllworkers -u root -i ~/.ssh/docker_rsa
+$ fab config:'deploy.properties' stopAllservers -u root -i ~/.ssh/docker_rsa
 ```

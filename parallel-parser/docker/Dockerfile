@@ -10,6 +10,7 @@ RUN yum install -y \
     wget \
     curl \
     tar \
+    tree \
     openssh-server \
     openssh-clients \
     gcc \

@@ -49,7 +49,7 @@ servicetypes={"jsonRPC" : { "servletname" : "jsonServices",
 [services]
 servicesdef={ 
   "parserservice" : { "server" : {"path" : 'parser-server-webapp' , "name" : "ParserServer" } , 
-    "worker" : {"path":'parser-worker-webapp' , "name" : "ParserWorker" } , "timeout" : 60000 , "rewriteEndpoint" : True ,
+    "worker" : {"path":'parser-worker-webapp' , "name" : "ParserWorker" } , "timeout" : 180000 , "rewriteEndpoint" : True ,
     "interface" : "jp.go.nict.rasc.parser.api.ParserService" , "msgpackPort" : 9011 } }
 
 [workers]
@@ -60,7 +60,7 @@ scripts.stop=jp.go.nict.langrid.webapps.jetty.embedded/scripts/RunAllWorker/stop
 worker.servicetype=msgpackRPC
 
 [servers]
-servers={ "server1" : { "host" : [("172.17.0", SERVER, SERVER)] , "port" : 8080 , "workers" :  ["workers1"] , "services" : "all" } } 
+servers={ "server1" : { "host" : [("172.17.0.", SERVER, SERVER)] , "port" : 8080 , "workers" :  ["workers1"] , "services" : "all" } } 
 scripts.start=jp.go.nict.langrid.webapps.jetty.embedded/scripts/RunAllServers/start_runallserver.sh
 scripts.stop=jp.go.nict.langrid.webapps.jetty.embedded/scripts/RunAllServers/stop_runallserver.sh
 server.servicetype=jsonRPC

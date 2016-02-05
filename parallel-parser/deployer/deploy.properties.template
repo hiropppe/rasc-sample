@@ -3,7 +3,7 @@ server.servicetype=jsonRPC
 worker.servicetype=pbRPC
 proxy.servicetype=jsonRPC
 deploy.user=root
-deploy.path=/%(deploy.user)s/nict/rasc/parser
+deploy.path=/%(deploy.user)s/nict/rasc/parser/
 repos.user=mtnk
 
 [repository]

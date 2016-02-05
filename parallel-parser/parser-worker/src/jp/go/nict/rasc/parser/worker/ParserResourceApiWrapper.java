@@ -24,9 +24,9 @@ public class ParserResourceApiWrapper extends ResourceApiWrapperBase {
 		service.setDelimiterIn("\\n");
 		service.setDelimiterOut("EOS\\n");
 		service.setDelLastNewline(true);
-		service.setPoolSize(1);
-		service.setInitPoolSize(1);
-        service.setTimeOut(180000);
+		service.setPoolSize(4);
+		service.setInitPoolSize(4);
+        // service.setTimeOut(180000);
 		service.init();
 	}
 

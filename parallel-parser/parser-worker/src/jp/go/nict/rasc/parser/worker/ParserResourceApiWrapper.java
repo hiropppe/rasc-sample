@@ -20,12 +20,13 @@ public class ParserResourceApiWrapper extends ResourceApiWrapperBase {
 	
 	public ParserResourceApiWrapper() {
 		service = new StdIOCommandParallelArrayService();
-		service.setCmdLine("/usr/local/bin/mecab");
+		service.setCmdLine("/usr/local/bin/run_knp");
 		service.setDelimiterIn("\\n");
 		service.setDelimiterOut("EOS\\n");
 		service.setDelLastNewline(true);
-		service.setPoolSize(2);
-		service.setInitPoolSize(2);
+		service.setPoolSize(1);
+		service.setInitPoolSize(1);
+        service.setTimeOut(180000);
 		service.init();
 	}
 

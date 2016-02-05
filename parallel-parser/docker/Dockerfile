@@ -96,12 +96,25 @@ RUN wget -O knp-4.16.tar.bz2 'http://nlp.ist.i.kyoto-u.ac.jp/DLcounter/lime.cgi?
  && ./configure --prefix=/usr/local --with-juman-prefix=/usr/local/ \
  && make \ 
  && make install \
+ && ldconfig \
  && cd .. \
  && rm -rf knp*
 
+# CaboCha
+RUN curl -s https://cabocha.googlecode.com/files/cabocha-0.68.tar.bz2 | tar -xj -C . \
+ && cd cabocha-0.68 \
+ && ./configure \
+ && make \
+ && make check \
+ && make install \
+ && ldconfig
+
+COPY run_knp /usr/local/bin/
+RUN chown root:root /usr/local/bin/run_knp && chmod 700 /usr/local/bin/run_knp
+
 RUN mkdir ~/.ssh
 
-ADD bootstrap.sh /etc/bootstrap.sh
+COPY bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh && chmod 700 /etc/bootstrap.sh
 ENV BOOTSTRAP /etc/bootstrap.sh
 

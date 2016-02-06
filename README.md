@@ -1,9 +1,5 @@
 ## RaSCメモ
-RaSCを使って入力文書の解析を複数のノードに分散させるメモ
-
-### 参考
-チュートリアル3-1: 分散実行による負荷分散
-<https://alaginrc.nict.go.jp/rasc/ja/rasc_parallel.html>
+[RaSC](https://alaginrc.nict.go.jp/rasc/ja/)を使って入力文書の解析を複数のノードに分散させるメモ
 
 ### 環境
 - Fabric 1.10.2
@@ -112,3 +108,6 @@ $ fab config:'deploy.properties' stopproxy -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' stopAllworkers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' stopAllservers -u root -i ~/.ssh/docker_rsa
 ```
+
+## 参考
+[チュートリアル3-1: 分散実行による負荷分散](https://alaginrc.nict.go.jp/rasc/ja/rasc_parallel.html)

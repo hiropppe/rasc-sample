@@ -37,14 +37,14 @@ $ fab config:'deploy.properties' deployAllworkers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' deployproxy -u root -i ~/.ssh/docker_rsa
 ```
 
-### サーバ起動
+サーバ起動
 ```
 $ fab config:'deploy.properties' startAllservers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' startAllworkers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' startproxy -u root -i ~/.ssh/docker_rsa
 ```
 
-### テストリクエスト
+テストリクエスト
 ```
 In [1]: import requests, json
 
@@ -102,7 +102,7 @@ In [7]: for s in response['result']:
 見た みた 見る 動詞 2 * 0 母音動詞 1 タ形 10 "代表表記:見る/みる 補文ト 自他動詞:自:見える/みえる" <代表表記:見る/みる><補文ト><自他動詞:自:見える/みえる><正規化代表表記:見る/みる><文末><表現文末><かな漢字><活用語><自立><内容語><タグ単位始><文節始><文節主辞>
 ```
 
-### サーバ停止
+サーバ停止
 ```
 $ fab config:'deploy.properties' stopproxy -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' stopAllworkers -u root -i ~/.ssh/docker_rsa

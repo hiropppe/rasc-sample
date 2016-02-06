@@ -1,35 +1,37 @@
 ## RaSCメモ
-
-調査検証中。。。
-
 RaSCを使って入力文書の解析を複数のノードに分散させるメモ
 
-環境
+### 参考
+チュートリアル3-1: 分散実行による負荷分散
+<https://alaginrc.nict.go.jp/rasc/ja/rasc_parallel.html>
+
+### 環境
 - Fabric 1.10.2
 - Ant 1.9.6
 - Docker 1.8.2
 - Docker Compose 1.3.1
 
-### サンプル解析器の設定
-ParserResourceApiWrapperでStdIOCommandParallelArrayServiceを初期化している。
-サンプルはMeCab。
+### 解析器の設定
+ParserResourceApiWrapperでStdIOCommandParallelArrayServiceを初期化
+サンプルでは、juman | knp -tab を実行 
 
-### サンプルの配備
-コンテナの起動
+### 起動とテスト
+Dockerコンテナの準備
 ```
+# コンテナ起動
+$ cd parallel-parser/docker/
 $ docker-compose up -d
 $ ./update_docker_hosts.sh
-```
-キーの配布
-```
-ssh-keygen -t rsa -P '' -f ~/.ssh/docker_rsa -C "hiropppe@github.com" 
-cat ~/.ssh/docker_rsa.pub >> ~/.ssh/authorized_keys
-cat /etc/docker-container-hosts | grep 'containers.dev' | awk '{print$1}' | while read ip; do scp ~/.ssh/authorized_keys root@${ip}:/root/.ssh/; done
+
+# モジュールの配備に使うキーの配布
+$ ssh-keygen -t rsa -P '' -f ~/.ssh/docker_rsa -C "hiropppe@github.com" 
+$ cat ~/.ssh/docker_rsa.pub >> ~/.ssh/authorized_keys
+$ cat /etc/docker-container-hosts | grep 'containers.dev' | awk '{print$1}' | while read ip; do scp ~/.ssh/authorized_keys root@${ip}:/root/.ssh/; done
 ```
 
 モジュール配備
 ```
-$ cd parallel-parser/deploy/
+$ cd parallel-parser/deployer/
 $ sed s/PROXY/$(cat /etc/docker-container-hosts | grep 'proxy' | awk '{print substr($1, 10)}')/g deploy.properties.template | \
 > sed s/SERVER/$(cat /etc/docker-container-hosts | grep 'server' | awk '{print substr($1, 10)}')/g | \
 > sed s/WORKER1/$(cat /etc/docker-container-hosts | grep 'worker1' | awk '{print substr($1, 10)}')/g | \
@@ -39,14 +41,14 @@ $ fab config:'deploy.properties' deployAllworkers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' deployproxy -u root -i ~/.ssh/docker_rsa
 ```
 
-サーバ起動
+### サーバ起動
 ```
 $ fab config:'deploy.properties' startAllservers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' startAllworkers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' startproxy -u root -i ~/.ssh/docker_rsa
 ```
 
-リクエストサンプル
+### テストリクエスト
 ```
 In [1]: import requests, json
 
@@ -104,7 +106,7 @@ In [7]: for s in response['result']:
 見た みた 見る 動詞 2 * 0 母音動詞 1 タ形 10 "代表表記:見る/みる 補文ト 自他動詞:自:見える/みえる" <代表表記:見る/みる><補文ト><自他動詞:自:見える/みえる><正規化代表表記:見る/みる><文末><表現文末><かな漢字><活用語><自立><内容語><タグ単位始><文節始><文節主辞>
 ```
 
-サーバ停止
+### サーバ停止
 ```
 $ fab config:'deploy.properties' stopproxy -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' stopAllworkers -u root -i ~/.ssh/docker_rsa

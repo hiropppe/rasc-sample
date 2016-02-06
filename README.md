@@ -30,9 +30,10 @@ cat /etc/docker-container-hosts | grep 'containers.dev' | awk '{print$1}' | whil
 モジュール配備
 ```
 $ cd parallel-parser/deploy/
-$ sed s/PROXY/$(cat /etc/docker-container-hosts | grep 'proxy' | awk '{print substr($1, 10)}')/g deploy.properties.template | sed s/SERVER/$(cat /etc/docker-container-hosts | grep 
-'server' | awk '{print substr($1, 10)}')/g | sed s/WORKER1/$(cat /etc/docker-container-hosts | grep 'worker1' | awk '{print substr($1, 10)}')/g | sed s/WORKER2/$(cat /etc/docker-container-hosts | grep 'worke
-r2' | awk '{print substr($1, 10)}')/g > deploy.properties
+$ sed s/PROXY/$(cat /etc/docker-container-hosts | grep 'proxy' | awk '{print substr($1, 10)}')/g deploy.properties.template | \
+> sed s/SERVER/$(cat /etc/docker-container-hosts | grep 'server' | awk '{print substr($1, 10)}')/g | \
+> sed s/WORKER1/$(cat /etc/docker-container-hosts | grep 'worker1' | awk '{print substr($1, 10)}')/g | \
+> sed s/WORKER2/$(cat /etc/docker-container-hosts | grep 'worker2' | awk '{print substr($1, 10)}')/g > deploy.properties
 $ fab config:'deploy.properties' deployAllservers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' deployAllworkers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' deployproxy -u root -i ~/.ssh/docker_rsa

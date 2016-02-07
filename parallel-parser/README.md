@@ -1,4 +1,4 @@
-## RaSCメモ
+## 分散並列自然文解析器RPCサンプル
 [RaSC](https://alaginrc.nict.go.jp/rasc/ja/)を使って入力文書の解析を複数のノードに分散させるメモ
 
 ### 環境

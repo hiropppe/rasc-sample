@@ -9,7 +9,8 @@
 
 #### 解析器の設定
 ParserResourceApiWrapperでStdIOCommandParallelArrayServiceを初期化
-サンプルでは、juman | knp -tab を実行 
+
+サンプルは、juman | knp -tab を実行 
 
 #### 起動とテスト
 Dockerコンテナの準備

@@ -1,17 +1,17 @@
-## 分散並列自然文解析器RPCサンプル
+### 形態素・係り受け解析器の分散実行
 [RaSC](https://alaginrc.nict.go.jp/rasc/ja/)を使って入力文書の解析を複数のノードに分散させるメモ
 
-### 環境
+#### 環境
 - Fabric 1.10.2
 - Ant 1.9.6
 - Docker 1.8.2
 - Docker Compose 1.3.1
 
-### 解析器の設定
+#### 解析器の設定
 ParserResourceApiWrapperでStdIOCommandParallelArrayServiceを初期化
 サンプルでは、juman | knp -tab を実行 
 
-### 起動とテスト
+#### 起動とテスト
 Dockerコンテナの準備
 ```
 # コンテナ起動
@@ -109,5 +109,5 @@ $ fab config:'deploy.properties' stopAllworkers -u root -i ~/.ssh/docker_rsa
 $ fab config:'deploy.properties' stopAllservers -u root -i ~/.ssh/docker_rsa
 ```
 
-## 参考
+#### 参考
 [チュートリアル3-1: 分散実行による負荷分散](https://alaginrc.nict.go.jp/rasc/ja/rasc_parallel.html)

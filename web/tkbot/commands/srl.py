@@ -22,6 +22,7 @@ class SRL(ScrapyCommand):
     self.extractor = extractcontent.ExtractContent()
     self.extractor.set_option({'threshold': 0})
     
+    self.re_slash_date = re.compile(ur'(20\d{2})[-/](\d{,2})[-/](\d{,2})')
     self.re_day_of_week = re.compile(ur'（[月火水木金土日祝・]{,3}）')
 
   def syntax(self):
@@ -86,7 +87,8 @@ class SRL(ScrapyCommand):
 
   # サーバ側のJUMANの前処理に追加したい
   def _parse_pre_process(self, raw):
-    s = mojimoji.han_to_zen(raw)
+    s = self.re_slash_date.sub(ur'\1年\2月\3日', raw)
+    s = mojimoji.han_to_zen(s)
     s = self.re_day_of_week.sub('', s)
     s = s.replace(u'\uff5e', u'から').replace(u'\u301c', u'から')
     return s

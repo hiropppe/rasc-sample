@@ -22,9 +22,6 @@ class SRL(ScrapyCommand):
     self.extractor = extractcontent.ExtractContent()
     self.extractor.set_option({'threshold': 0})
     
-    self.re_slash_date = re.compile(ur'(20\d{2})[-/](\d{,2})[-/](\d{,2})')
-    self.re_day_of_week = re.compile(ur'（[月火水木金土日祝・]{,3}）')
-
   def syntax(self):
     return "[options] <url>"
 
@@ -65,7 +62,7 @@ class SRL(ScrapyCommand):
     headers = {'content-type': 'application/json-rpc'}
     params = {
       'method': 'process',
-      'params': [[{'seq': i, 'sent': self._parse_pre_process(s)} for i, s in enumerate(sents)]]
+      'params': [[{'seq': i, 'sent': s.strip()} for i, s in enumerate(sents) if 0 < len(s.strip())]]
     }
 
     response = requests.post(self.parser_jsonrpc_url, data=json.dumps(params), headers=headers).json()
@@ -79,20 +76,10 @@ class SRL(ScrapyCommand):
       timeout=180 
     )
      
-    sents = [self._parse_pre_process(s) for s in sents]
-    
     result = client.call('analyzeArray', sents)
     for i, each_result in enumerate(result):
       print(each_result)
 
-  # サーバ側のJUMANの前処理に追加したい
-  def _parse_pre_process(self, raw):
-    s = self.re_slash_date.sub(ur'\1年\2月\3日', raw)
-    s = mojimoji.han_to_zen(s)
-    s = self.re_day_of_week.sub('', s)
-    s = s.replace(u'\uff5e', u'から').replace(u'\u301c', u'から')
-    return s
-  
   def run(self, args, opts):
     ## NLP parser settings
     self.parser_server = self.settings['PARSER_RPC_SERVER']

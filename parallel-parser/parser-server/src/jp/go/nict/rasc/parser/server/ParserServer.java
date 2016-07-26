@@ -15,17 +15,13 @@ import jp.go.nict.rasc.parser.api.Doc;
 import jp.go.nict.rasc.parser.api.ParsedDoc;
 
 public class ParserServer extends AbstractServerModuleBase implements ParserService {
-
-	private int lru_epindex = 0;
 	
 	@Override
 	public ParsedDoc[] process(final Doc[] in) throws ProcessFailedException {
 		List<String> endpoints = getEndpointList();
 		Map<Integer,List<Doc>> args = new HashMap<Integer,List<Doc>>(endpoints.size());
-		int i=0;
-		for(; i<in.length; i++) {
-			int epindex = (lru_epindex+i)%endpoints.size();
-			lru_epindex = epindex%endpoints.size();
+		for(int i=0; i<in.length; i++) {
+			int epindex = i%endpoints.size();
 			List<Doc> epdata = args.get(epindex);
 			if(epdata == null) {
 				epdata = new ArrayList<Doc>();
@@ -33,7 +29,6 @@ public class ParserServer extends AbstractServerModuleBase implements ParserServ
 			}
 			epdata.add(in[i]);
 		}
-		lru_epindex = (lru_epindex+i)%endpoints.size();
 		
 		final BlockingQueue<Doc[]> queue = new ArrayBlockingQueue<>(in.length, false);
 		for(List<Doc> eachArg: args.values()) {

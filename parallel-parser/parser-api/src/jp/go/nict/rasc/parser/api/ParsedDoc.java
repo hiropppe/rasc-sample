@@ -5,42 +5,43 @@ import org.msgpack.annotation.Message;
 import jp.go.nict.langrid.commons.rpc.intf.Field;
 
 @Message
-public class ParsedDoc implements Comparable<ParsedDoc> {
+public class ParsedDoc {
 	@Field(order = 1)
-	private Doc input;
+	private Doc doc;
 	@Field(order = 2)
-	private String sent;
+	private String result;
 
 	public ParsedDoc() {
 	}
 
-	public ParsedDoc(Doc input, String sent) {
-		this.input = input;
-		this.sent = sent;
+	public ParsedDoc(Doc doc, String result) {
+		this.doc = doc;
+		this.result = result;
 	}
 
 	public Doc getInput() {
-		return input;
+		return doc;
 	}
 	
-	public void setInput(Doc input) {
-		this.input = input;
+	public void setInput(Doc doc) {
+		this.doc = doc;
 	}
 
-	public String getSent() {
-		return sent;
+	public String getResult() {
+		return result;
 	}
 	
-	public void setSent(String sent) {
-		this.sent = sent;
+	public void setResult(String result) {
+		this.result = result;
 	}
 
 	@Override
 	public int hashCode() {
-		if(input == null) {
+		if(doc == null) {
 			return super.hashCode();
+		} else {
+			return doc.hashCode();
 		}
-		return input.getSeq();
 	}
 
 	@Override
@@ -52,15 +53,10 @@ public class ParsedDoc implements Comparable<ParsedDoc> {
 		if (getClass() != obj.getClass())
 			return false;
 		ParsedDoc other = (ParsedDoc) obj;
-		if (input == null || other.input == null) {
+		if (doc == null || other.doc == null || result == null || other.result == null) {
 			return false;
 		} else {
-			return other.input.getSeq() == this.input.getSeq();
+			return other.doc.equals(this.doc) && other.result.equals(this.result);
 		}
-	}
-
-	@Override
-	public int compareTo(ParsedDoc o) {
-		return this.input.getSeq() - o.input.getSeq();
 	}
 }

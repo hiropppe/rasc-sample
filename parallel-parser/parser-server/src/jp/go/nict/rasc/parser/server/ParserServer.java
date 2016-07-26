@@ -1,8 +1,6 @@
 package jp.go.nict.rasc.parser.server;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,10 +52,8 @@ public class ParserServer extends AbstractServerModuleBase implements ParserServ
 					return new ParsedDoc[]{};
 				}
 			}	
-		};
-		List<ParsedDoc> ret = Arrays.asList(server.getResult());
-		Collections.<ParsedDoc>sort(ret);
-		return ret.toArray(new ParsedDoc[]{});
+		};		
+		return server.getResult();
 	}
 
 }

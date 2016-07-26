@@ -20,25 +20,25 @@ public class ParserResourceApiWrapper extends ResourceApiWrapperBase {
 	
 	public ParserResourceApiWrapper() {
 		service = new StdIOCommandParallelArrayService();
-		service.setCmdLine("/usr/local/bin/run_knp");
-		service.setDelimiterIn("\\n");
-		service.setDelimiterOut("EOS\\n");
+		service.setCmdLine("/usr/local/bin/tkp");
+		service.setDelimiterIn("EOD\\n");
+		service.setDelimiterOut("EOD\\n");
 		service.setDelLastNewline(true);
-		service.setPoolSize(4);
-		service.setInitPoolSize(4);
+		service.setPoolSize(2);
+		service.setInitPoolSize(2);
         // service.setTimeOut(180000);
 		service.init();
 	}
 
 	public void invokeApi(Doc[] in, ResourceApiWrapperReceiver<ParsedDoc> receiver) throws ProcessFailedException {
-		String[] text = new String[in.length];
+		String[] input = new String[in.length];
 		for(int i=0; i<in.length; i++) {
-			text[i] = in[i].getSent();
+			input[i] = in[i].getInput();
 		}
 		
 		String[] results;
 		try {
-			results = service.analyzeArray(text);
+			results = service.analyzeArray(input);
 		} catch (Exception e) {
 			throw new ProcessFailedException(e);
 		}

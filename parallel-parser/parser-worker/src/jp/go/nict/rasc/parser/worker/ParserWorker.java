@@ -11,7 +11,7 @@ import jp.go.nict.rasc.parser.api.ParsedDoc;
 public class ParserWorker extends AbstractWorkerModuleBase implements ParserService {
 		
 	@Override
-	public ParsedDoc[] process(final Doc[] in) throws ProcessFailedException {
+	public ParsedDoc[] process(final Doc[] doc) throws ProcessFailedException {
 		AbstractWorkerModule<ParsedDoc, ParserResourceApiWrapper> worker =
 			new AbstractWorkerModule<ParsedDoc, ParserResourceApiWrapper>(
 				ParserResourceApiWrapper.getInstance(), new ParsedDoc[] {}, "ParserService", this
@@ -19,7 +19,7 @@ public class ParserWorker extends AbstractWorkerModuleBase implements ParserServ
 				@Override
 				protected void callResourceApi(ParserResourceApiWrapper wrapper,
 						ResourceApiWrapperReceiver<ParsedDoc> receiver) throws ProcessFailedException {
-					wrapper.invokeApi(in, receiver);
+					wrapper.invokeApi(doc, receiver);
 				}
 			};
 		return worker.getResult();

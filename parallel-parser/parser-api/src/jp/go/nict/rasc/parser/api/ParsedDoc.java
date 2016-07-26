@@ -34,29 +34,4 @@ public class ParsedDoc {
 	public void setResult(String result) {
 		this.result = result;
 	}
-
-	@Override
-	public int hashCode() {
-		if(doc == null) {
-			return super.hashCode();
-		} else {
-			return doc.hashCode();
-		}
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ParsedDoc other = (ParsedDoc) obj;
-		if (doc == null || other.doc == null || result == null || other.result == null) {
-			return false;
-		} else {
-			return other.doc.equals(this.doc) && other.result.equals(this.result);
-		}
-	}
 }

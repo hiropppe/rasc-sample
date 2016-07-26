@@ -19,11 +19,11 @@ public class ParsedDoc {
 		this.result = result;
 	}
 
-	public Doc getInput() {
+	public Doc getDoc() {
 		return doc;
 	}
 	
-	public void setInput(Doc doc) {
+	public void setDoc(Doc doc) {
 		this.doc = doc;
 	}
 
